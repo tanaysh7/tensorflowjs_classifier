@@ -17,17 +17,18 @@
 
 import * as tf from '@tensorflow/tfjs';
 
-export const IMAGE_H = 28;
-export const IMAGE_W = 28;
+export const IMAGE_H = 24;
+export const IMAGE_W = 24;
 const IMAGE_SIZE = IMAGE_H * IMAGE_W;
-const NUM_CLASSES = 10;
-const NUM_DATASET_ELEMENTS = 65000;
+const NUM_CLASSES = 2;
+const NUM_DATASET_ELEMENTS = 1192;
 
-const NUM_TRAIN_ELEMENTS = 55000;
+const NUM_TRAIN_ELEMENTS = 1000;
 const NUM_TEST_ELEMENTS = NUM_DATASET_ELEMENTS - NUM_TRAIN_ELEMENTS;
 
 const MNIST_IMAGES_SPRITE_PATH =
-    'https://storage.googleapis.com/learnjs-data/model-builder/mnist_images.png';
+    'https://github.com/tanaysh7/tensorflowjs_classifier/raw/master/1.png';
+    
 const MNIST_LABELS_PATH =
     'https://storage.googleapis.com/learnjs-data/model-builder/mnist_labels_uint8';
 
@@ -52,7 +53,7 @@ export class MnistData {
         const datasetBytesBuffer =
             new ArrayBuffer(NUM_DATASET_ELEMENTS * IMAGE_SIZE * 4);
 
-        const chunkSize = 5000;
+        const chunkSize = 1000;
         canvas.width = img.width;
         canvas.height = chunkSize;
 
@@ -79,20 +80,20 @@ export class MnistData {
       img.src = MNIST_IMAGES_SPRITE_PATH;
     });
 
-    const labelsRequest = fetch(MNIST_LABELS_PATH);
-    const [imgResponse, labelsResponse] =
-        await Promise.all([imgRequest, labelsRequest]);
+    // const labelsRequest = fetch(MNIST_LABELS_PATH);
+    // const [imgResponse, labelsResponse] =
+    //     await Promise.all([imgRequest, labelsRequest]);
 
-    this.datasetLabels = new Uint8Array(await labelsResponse.arrayBuffer());
+    this.datasetLabels = new Array(2384).fill(0); //new Uint8Array(await labelsResponse.arrayBuffer());
 
     // Slice the the images and labels into train and test sets.
     this.trainImages =
         this.datasetImages.slice(0, IMAGE_SIZE * NUM_TRAIN_ELEMENTS);
-    this.testImages = this.datasetImages.slice(IMAGE_SIZE * NUM_TRAIN_ELEMENTS);
-    this.trainLabels =
-        this.datasetLabels.slice(0, NUM_CLASSES * NUM_TRAIN_ELEMENTS);
-    this.testLabels =
-        this.datasetLabels.slice(NUM_CLASSES * NUM_TRAIN_ELEMENTS);
+    // this.testImages = this.datasetImages.slice(IMAGE_SIZE * NUM_TRAIN_ELEMENTS);
+     this.trainLabels =
+         this.datasetLabels.slice(0, NUM_CLASSES * NUM_TRAIN_ELEMENTS);
+    // this.testLabels =
+    //     this.datasetLabels.slice(NUM_CLASSES * NUM_TRAIN_ELEMENTS);
   }
 
   /**
@@ -124,17 +125,17 @@ export class MnistData {
    *   labels: The one-hot encoded labels tensor, of shape
    *     `[numTestExamples, 10]`.
    */
-  getTestData(numExamples) {
-    let xs = tf.tensor4d(
-        this.testImages,
-        [this.testImages.length / IMAGE_SIZE, IMAGE_H, IMAGE_W, 1]);
-    let labels = tf.tensor2d(
-        this.testLabels, [this.testLabels.length / NUM_CLASSES, NUM_CLASSES]);
+  // getTestData(numExamples) {
+  //   let xs = tf.tensor4d(
+  //       this.testImages,
+  //       [this.testImages.length / IMAGE_SIZE, IMAGE_H, IMAGE_W, 1]);
+  //   let labels = tf.tensor2d(
+  //       this.testLabels, [this.testLabels.length / NUM_CLASSES, NUM_CLASSES]);
 
-    if (numExamples != null) {
-      xs = xs.slice([0, 0, 0, 0], [numExamples, IMAGE_H, IMAGE_W, 1]);
-      labels = labels.slice([0, 0], [numExamples, NUM_CLASSES]);
-    }
-    return {xs, labels};
-  }
+  //   if (numExamples != null) {
+  //     xs = xs.slice([0, 0, 0, 0], [numExamples, IMAGE_H, IMAGE_W, 1]);
+  //     labels = labels.slice([0, 0], [numExamples, NUM_CLASSES]);
+  //   }
+  //   return {xs, labels};
+  // }
 }
