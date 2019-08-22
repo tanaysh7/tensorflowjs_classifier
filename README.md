@@ -13,3 +13,8 @@ To run this on local server run
 `yarn`
 
 `yarn watch`
+
+Reading and using Sprite files:
+
+http://jsfiddle.net/ouLf8w0v/7/
+
